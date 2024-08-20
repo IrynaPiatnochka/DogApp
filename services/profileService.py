@@ -2,13 +2,8 @@ from database import db
 from models.profile import Profile
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import NoResultFound
-from gcd_service import upload_image, delete_image
 
-def save(profile_data, image_file=None):
-    
-    if image_file:
-        image_path = upload_image(image_file, image_file.filename)
-        profile_data['image_path'] = image_path
+def save(profile_data):
     
     new_profile = Profile(
         name=profile_data['name'],
@@ -40,14 +35,9 @@ def find_by_id(profile_id):
     return result
 
 
-def update(profile_id, profile_data, image_file=None):
+def update(profile_id, profile_data):
     
     profile = find_by_id(profile_id)
-    if image_file:
-        if profile.image_path:
-            delete_image(profile.image_path.split('/')[-1])
-        image_path = upload_image(image_file, image_file.filename)
-        profile_data['image_path'] = image_path
         
     query = update(Profile).where(Profile.id == profile_id).values(profile_data)
     result = db.session.execute(query)
@@ -60,8 +50,6 @@ def update(profile_id, profile_data, image_file=None):
 def delete(profile_id):
     
     profile = find_by_id(profile_id)
-    if profile.image_path:
-        delete_image(profile.image_path.split('/')[-1])
         
     query = delete(Profile).where(Profile.id == profile_id)
     result = db.session.execute(query)

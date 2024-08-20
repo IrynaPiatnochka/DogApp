@@ -8,13 +8,3 @@ class DevelopmentConfig:
     CACHE_TYPE = "Simple_Cache"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = True
-    GOOGLE_CLOUD_BUCKET = 'project_colab32'
-    GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-    # CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    # CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-    # MAIL_SERVER = 'smtp.gmail.com'
-    # MAIL_PORT = 587
-    # MAIL_USERNAME = 'your-email@gmail.com'
-    # MAIL_PASSWORD = 'your-email-password'
-    # MAIL_USE_TLS = True
-    # MAIL_USE_SSL = False
