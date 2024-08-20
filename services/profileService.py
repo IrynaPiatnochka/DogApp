@@ -20,12 +20,10 @@ def save(profile_data):
     db.session.refresh(new_profile)
     return new_profile
 
-
 def find_all():
     query = select(Profile)
     all_profiles = db.session.execute(query).scalars().all()
     return all_profiles
-
 
 def find_by_id(profile_id):
     query = select(Profile).filter(Profile.id == profile_id)
