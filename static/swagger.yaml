@@ -240,10 +240,11 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /medical_record/profile/{profile_id}/records:
+
+  /medical_record/profile/{profile_id}:
     post:
       tags:
-        - "Medical Record"
+        - "Medical Record"  
       summary: "Add a medical record"
       security:
         - bearerAuth: []
@@ -270,8 +271,8 @@ paths:
 
     get:
       tags:
-        - "Medical Record"
-      summary: "Get all medical records for a profile"
+        - "Medical Record"  
+      summary: "Get filtered records for a profile"
       security:
         - bearerAuth: []
       parameters:
@@ -279,28 +280,26 @@ paths:
           name: profile_id
           required: true
           type: integer
-          description: "ID of the profile to fetch medical records"
         - in: query
-          name: page
+          name: category_id
           required: false
           type: integer
-          description: "Page number for pagination"
         - in: query
-          name: limit
+          name: service_type_id
           required: false
           type: integer
-          description: "Number of records per page"
       responses:
         '200':
-          description: "Successful retrieval of records"
+          description: "Filtered records retrieved successfully"
           schema:
             type: array
             items:
               $ref: "#/definitions/MedicalRecordResponse"
-        '500':
-          description: "Database error"
+        '400':
+          description: "At least one filter parameter is required"
           schema:
             $ref: "#/definitions/ErrorResponse"
+
 
   /medical_record/profile/{profile_id}/records/{record_id}:
     get:
@@ -385,37 +384,6 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /profile/{profile_id}:
-    get:
-      tags:
-        - "Medical Record"
-      summary: "Get filtered records for a profile"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: profile_id
-          required: true
-          type: integer
-        - in: query
-          name: category_id
-          required: false
-          type: integer
-        - in: query
-          name: service_type_id
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: "Filtered records retrieved successfully"
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/MedicalRecordResponse"
-        '400':
-          description: "At least one filter parameter is required"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
 
   /categories:
     get:
