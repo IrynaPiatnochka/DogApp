@@ -385,7 +385,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
 
 
-  /categories:
+  /medical_record/categories:
     get:
       tags:
         - "Category"
@@ -402,7 +402,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /service_types:
+  /medical_record/service_types:
     get:
       tags:
         - "Service Type"
@@ -419,7 +419,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /service_types_by_category/{category_id}:
+  /medical_record/service_types_by_category/{category_id}:
     get:
       tags:
         - "Service Type"
@@ -537,7 +537,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /events:
+  /event/events:
     get:
       tags:
         - "Event"
