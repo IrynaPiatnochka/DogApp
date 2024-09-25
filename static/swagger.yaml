@@ -1,0 +1,886 @@
+swagger: '2.0'
+info:
+  title: "DogApp API"
+  description: "API to manage app interactions"
+  version: "1.0.0"
+host: "127.0.0.1:5000"  # Running on local host
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header 
+
+tags:
+  - name: "Owner"
+    description: "Operations related to dog owners"
+  - name: "Profile"
+    description: "Operations related to dog's profile"
+  - name: "Medical Record"
+    description: "Operations related to dog's medical records"
+  - name: "Event"
+    description: "Operations related to events"
+
+paths:
+  /owner:
+    post:
+      tags:
+        - "Owner"
+      summary: "Sign Up"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/OwnerSignup"
+      responses:
+        '201':
+          description: "Account created"
+          schema:
+            $ref: "#/definitions/OwnerResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /owner/login:
+    post:
+      tags:
+        - "Owner"
+      summary: "Log In to generate a token"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/LoginPayload"
+      responses:
+        '200':
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        '401':
+          description: "Invalid email or password"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /owner/owners/current:
+    get:
+      tags:
+        - "Owner"
+      summary: "Get current owner information"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Owner information retrieved successfully"
+          schema:
+            $ref: "#/definitions/OwnerInfoResponse"
+        '404':
+          description: "Owner not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - "Owner"
+      summary: "Update current owner information"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/OwnerUpdatePayload"
+      responses:
+        '200':
+          description: "Owner information updated successfully"
+          schema:
+            $ref: "#/definitions/OwnerResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        '404':
+          description: "Owner not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - "Owner"
+      summary: "Delete current owner"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Owner deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+        '404':
+          description: "Owner not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  
+
+  /profile/profiles:
+    post:
+      summary: "Create a new dog profile"
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: profile
+          required: true
+          schema:
+            $ref: "#/definitions/ProfilePayload"
+      responses:
+        '201':
+          description: "Profile created successfully"
+          schema:
+            $ref: "#/definitions/ProfileResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    
+    get:
+      summary: "Retrieve all dog profiles for the current owner"
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Profiles retrieved successfully"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ProfileResponse"
+        '404':
+          description: "No profiles found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /profile/profiles/{profile_id}:
+    get:
+      summary: "Retrieve a dog profile by ID"
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Profile retrieved successfully"
+          schema:
+            $ref: "#/definitions/ProfileResponse"
+        '404':
+          description: "Profile not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      summary: "Update an existing dog profile"
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+        - in: body
+          name: profile
+          required: true
+          schema:
+            $ref: "#/definitions/ProfilePayload"
+      responses:
+        '200':
+          description: "Profile updated successfully"
+          schema:
+            $ref: "#/definitions/ProfileResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      summary: "Delete a dog profile"
+      tags:
+        - "Profile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Profile deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+        '404':
+          description: "Profile not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /medical_record/profile/{profile_id}/records:
+    post:
+      tags:
+        - "Medical Record"
+      summary: "Add a medical record"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+          description: "ID of the profile to which the medical record belongs"
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/MedicalRecordCreate"
+      responses:
+        '201':
+          description: "Record added successfully"
+          schema:
+            $ref: "#/definitions/MedicalRecordResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    get:
+      tags:
+        - "Medical Record"
+      summary: "Get all medical records for a profile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+          description: "ID of the profile to fetch medical records"
+        - in: query
+          name: page
+          required: false
+          type: integer
+          description: "Page number for pagination"
+        - in: query
+          name: limit
+          required: false
+          type: integer
+          description: "Number of records per page"
+      responses:
+        '200':
+          description: "Successful retrieval of records"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/MedicalRecordResponse"
+        '500':
+          description: "Database error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /medical_record/profile/{profile_id}/records/{record_id}:
+    get:
+      tags:
+        - "Medical Record"
+      summary: "Get a specific medical record"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+        - in: path
+          name: record_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Successful retrieval of the record"
+          schema:
+            $ref: "#/definitions/MedicalRecordResponse"
+        '404':
+          description: "Record not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - "Medical Record"
+      summary: "Edit a specific medical record"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+        - in: path
+          name: record_id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/MedicalRecordUpdate"
+      responses:
+        '200':
+          description: "Record updated successfully"
+          schema:
+            $ref: "#/definitions/MedicalRecordResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        '404':
+          description: "Record not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - "Medical Record"
+      summary: "Delete a specific medical record"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+        - in: path
+          name: record_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Record deleted successfully"
+        '404':
+          description: "Record not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /profile/{profile_id}:
+    get:
+      tags:
+        - "Medical Record"
+      summary: "Get filtered records for a profile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: profile_id
+          required: true
+          type: integer
+        - in: query
+          name: category_id
+          required: false
+          type: integer
+        - in: query
+          name: service_type_id
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: "Filtered records retrieved successfully"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/MedicalRecordResponse"
+        '400':
+          description: "At least one filter parameter is required"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /categories:
+    get:
+      tags:
+        - "Category"
+      summary: "Get all categories for medical records"
+      responses:
+        '200':
+          description: "Successful retrieval of categories"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CategoryResponse"
+        '500':
+          description: "Database error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /service_types:
+    get:
+      tags:
+        - "Service Type"
+      summary: "Get all service types for medical records"
+      responses:
+        '200':
+          description: "Successful retrieval of service types"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceTypeResponse"
+        '500':
+          description: "Database error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /service_types_by_category/{category_id}:
+    get:
+      tags:
+        - "Service Type"
+      summary: "Get service types by category for medical records"
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Successful retrieval of service types"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceTypeResponse"
+        '400':
+          description: "Invalid category ID"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        '500':
+          description: "Database error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /event:
+    post:
+      tags:
+        - "Event"
+      summary: "Create an Event"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/EventPayload"
+      responses:
+        '201':
+          description: "Event created successfully"
+          schema:
+            $ref: "#/definitions/EventResponse"
+        '400':
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /event/{event_id}:
+    get:
+      tags:
+        - "Event"
+      summary: "Get an Event by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Event retrieved successfully"
+          schema:
+            $ref: "#/definitions/EventResponse"
+        '404':
+          description: "Event not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - "Event"
+      summary: "Update an Event by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/EventPayload"
+      responses:
+        '200':
+          description: "Event updated successfully"
+          schema:
+            $ref: "#/definitions/EventResponse"
+        '404':
+          description: "Event not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - "Event"
+      summary: "Delete an Event by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: "Event deleted successfully"
+          schema:
+            $ref: "#/definitions/DeleteResponse"
+        '404':
+          description: "Event not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /events:
+    get:
+      tags:
+        - "Event"
+      summary: "Get All Events"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: view
+          type: string
+          description: "View type: day, week, month, or all"
+        - in: query
+          name: start_date
+          type: string
+          format: date
+          description: "Start date for the event view"
+        - in: query
+          name: year
+          type: integer
+          description: "Year for monthly view"
+        - in: query
+          name: month
+          type: integer
+          description: "Month for monthly view"
+      responses:
+        '200':
+          description: "Events retrieved successfully"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EventResponse"
+        '400':
+          description: "Invalid query parameters"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+definitions:
+  OwnerSignup:
+    type: object
+    properties:
+      password:
+        type: string
+      owner_email:
+        type: string
+      owner_name:
+        type: string
+      owner_phone:
+        type: string
+    required:
+      - password
+      - owner_email
+
+  OwnerResponse:
+    type: object
+    properties:
+      message:
+        type: string
+      owner:
+        type: object
+        properties:
+          id:
+            type: integer
+          owner_email:
+            type: string
+
+  LoginPayload:
+    type: object
+    properties:
+      owner_email:
+        type: string
+      password:
+        type: string
+    required:
+      - owner_email
+      - password
+
+  LoginResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      auth_token:
+        type: string
+
+  OwnerInfoResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      owner_email:
+        type: string
+      owner_name:
+        type: string
+      owner_phone:
+        type: string
+
+  OwnerUpdatePayload:
+    type: object
+    properties:
+      owner_email:
+        type: string
+      owner_name:
+        type: string
+      owner_phone:
+        type: string
+
+  ProfilePayload:
+    type: object
+    properties:
+      name:
+        type: string
+      date_of_birth:
+        type: string
+        format: date
+      sex:
+        type: string
+      fixed:
+        type: boolean
+      breed:
+        type: string
+      weight:
+        type: number
+        format: float
+      chip_number:
+        type: string
+      image_path:
+        type: string
+      vet_clinic_name:
+        type: string
+      vet_clinic_phone:
+        type: string
+      vet_clinic_email:
+        type: string
+      vet_doctor_name:
+        type: string
+    required:
+      - name
+      - breed
+
+  ProfileResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      date_of_birth:
+        type: string
+        format: date
+      age:
+        type: integer
+      sex:
+        type: string
+      fixed:
+        type: boolean
+      breed:
+        type: string
+      weight:
+        type: number
+        format: float
+      chip_number:
+        type: string
+      image_path:
+        type: string
+      vet_clinic_name:
+        type: string
+      vet_clinic_phone:
+        type: string
+      vet_clinic_email:
+        type: string
+      vet_doctor_name:
+        type: string
+      owner_id:
+        type: integer
+
+  MedicalRecordCreate:
+    type: object
+    properties:
+      service_date:
+        type: string
+        format: date
+      category_id:
+        type: integer
+      service_type_id:
+        type: integer
+      follow_up_date:
+        type: string
+        format: date
+      fee:
+        type: number
+        format: float
+      image_path:
+        type: string
+
+  MedicalRecordUpdate:
+    type: object
+    properties:
+      service_date:
+        type: string
+        format: date
+      category_id:
+        type: integer
+      service_type_id:
+        type: integer
+      follow_up_date:
+        type: string
+        format: date
+      fee:
+        type: number
+        format: float
+      image_path:
+        type: string
+
+  MedicalRecordResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      service_date:
+        type: string
+        format: date
+      category_name:
+        type: string
+      service_type_name:
+        type: string
+      follow_up_date:
+        type: string
+        format: date
+      fee:
+        type: number
+        format: float
+      image_path:
+        type: string
+      profile_id:
+        type: integer
+
+  CategoryResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      category_name:
+        type: string
+
+  ServiceTypeResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      category_id:
+        type: integer
+
+  EventPayload:
+    type: object
+    properties:
+      name:
+        type: string
+      street:
+        type: string
+      zip_code:
+        type: string
+      state:
+        type: string
+      start_time:
+        type: string
+        format: date-time
+      end_time:
+        type: string
+        format: date-time
+      notes:
+        type: string
+
+  EventResponse:
+    type: object
+    properties:
+      message:
+        type: string
+      event:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          street:
+            type: string
+          zip_code:
+            type: string
+          state:
+            type: string
+          start_time:
+            type: string
+            format: date-time
+          end_time:
+            type: string
+            format: date-time
+          notes:
+            type: string
+
+  DeleteResponse:
+    type: object
+    properties:
+      message:
+        type: string
+
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: string

@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_caching import Cache
+from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS 
 from flask_mail import Mail
 from config import DevelopmentConfig, db, migrate
@@ -18,6 +19,10 @@ from routes.eventBP import event_blueprint
 from routes.testBP import test_blueprint
 from reminders.reminderScheduler import start_reminder_scheduler
 
+
+SWAGGER_URL = '/api/docs' 
+API_URL = '/static/swagger.yaml'
+swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': 'DogApp API'})
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
@@ -42,6 +47,8 @@ def create_app(config_name='DevelopmentConfig'):
     app.register_blueprint(medical_record_blueprint, url_prefix='/medical_record')
     app.register_blueprint(event_blueprint, url_prefix='/event')
     app.register_blueprint(test_blueprint, url_prefix='/test')
+    app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
+
 
 
     with app.app_context():
