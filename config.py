@@ -29,16 +29,23 @@ class ProductionConfig(Config):
     DEBUG = False  
 
 def create_db_connection():
-    conn_str = (
-        f"Driver={{ODBC Driver 18 for SQL Server}};"
-        f"Server={os.getenv('DB_HOST')};"
-        f"Database={os.getenv('DB_DATABASE')};"
-        f"UID={os.getenv('DB_USERNAME')};"
-        f"PWD={os.getenv('DB_PASSWORD')};"
-        f"Encrypt=yes;"
-        f"TrustServerCertificate=yes;"
-        f"Connection Timeout=30;"
-    )
+    if os.getenv('DB_ENV') == 'cloud':
+        conn_str = (
+            f"Driver={{ODBC Driver 18 for SQL Server}};"
+            f"Server={os.getenv('DB_HOST')};"
+            f"Database={os.getenv('DB_DATABASE')};"
+            f"UID={os.getenv('DB_USERNAME')};"
+            f"PWD={os.getenv('DB_PASSWORD')};"
+            f"Encrypt=yes;"
+            f"TrustServerCertificate=yes;"
+            f"Connection Timeout=30;"
+        )
+    else:
+        # Local connection 
+        conn_str = (
+            f"mysql+mysqlconnector://{os.getenv('LOCAL_DB_USERNAME')}:{os.getenv('LOCAL_DB_PASSWORD')}@"
+            f"{os.getenv('LOCAL_DB_HOST')}/{os.getenv('LOCAL_DB_DATABASE')}"
+        )
     return pyodbc.connect(conn_str)
 
 db = SQLAlchemy()
