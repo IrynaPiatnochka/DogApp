@@ -5,7 +5,7 @@ from flask_caching import Cache
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS 
 from flask_mail import Mail
-from config import DevelopmentConfig, db, migrate
+from config import DevelopmentConfig
 from database import db
 from models.schemas import ma
 from models.dogOwner import DogOwner
@@ -34,11 +34,9 @@ def create_app(config_name='DevelopmentConfig'):
     app.config.from_object(f'config.{config_name}')
     
     db.init_app(app)
-    migrate.init_app(app, db)
     ma.init_app(app)
     mail.init_app(app)
     cache.init_app(app)
-    
     CORS(app)
 
     app.register_blueprint(dog_owner_blueprint, url_prefix='/owner')
@@ -58,7 +56,8 @@ def create_app(config_name='DevelopmentConfig'):
         # # db.drop_all()
         # db.create_all()
         
-        migrate.init_app(app, db)
+        #db.drop_all()
+        db.create_all()
         
     start_reminder_scheduler(app)
 

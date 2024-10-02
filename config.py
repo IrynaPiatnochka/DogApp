@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import pyodbc 
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 
 load_dotenv()
 
@@ -49,4 +48,3 @@ def create_db_connection():
     return pyodbc.connect(conn_str)
 
 db = SQLAlchemy()
-migrate = Migrate()

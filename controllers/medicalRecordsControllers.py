@@ -80,7 +80,6 @@ def add_medical_record(current_owner_id, profile_id):
         return jsonify({'message': str(e)}), 500
 
 
-
 @handle_options 
 @token_required
 def get_medical_record(current_owner_id, profile_id, record_id):

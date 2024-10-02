@@ -32,6 +32,7 @@ def create_medical_record(current_owner_id, data):
     service_type = db.session.query(ServiceType).get(data['service_type_id'])
     if not service_type:
         raise ValueError('Invalid service type ID')
+    
 
     new_record = MedicalRecord(
         service_date=data['service_date'],
