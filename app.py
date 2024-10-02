@@ -5,7 +5,7 @@ from flask_caching import Cache
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS 
 from flask_mail import Mail
-from config import DevelopmentConfig, db, migrate
+from config import DevelopmentConfig
 from database import db
 from models.schemas import ma
 from models.dogOwner import DogOwner
@@ -20,26 +20,23 @@ from routes.testBP import test_blueprint
 from reminders.reminderScheduler import start_reminder_scheduler
 
 
-SWAGGER_URL = '/api/docs' 
-API_URL = '/static/swagger.yaml'
-swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': 'DogApp API'})
-
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
 cache = Cache()
 mail = Mail()
+
+SWAGGER_URL = '/api/docs' 
+API_URL = '/static/swagger.yaml'
+swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': 'DogApp API'})
 
 def create_app(config_name='DevelopmentConfig'):
     app = Flask(__name__)
     app.config.from_object(f'config.{config_name}')
     
     db.init_app(app)
-    migrate.init_app(app, db)
     ma.init_app(app)
     mail.init_app(app)
     cache.init_app(app)
-    
-
     CORS(app)
 
     app.register_blueprint(dog_owner_blueprint, url_prefix='/owner')
@@ -48,7 +45,6 @@ def create_app(config_name='DevelopmentConfig'):
     app.register_blueprint(event_blueprint, url_prefix='/event')
     app.register_blueprint(test_blueprint, url_prefix='/test')
     app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
-
 
 
     with app.app_context():
@@ -60,13 +56,13 @@ def create_app(config_name='DevelopmentConfig'):
         # # db.drop_all()
         # db.create_all()
         
-        migrate.init_app(app, db)
+        #db.drop_all()
+        db.create_all()
         
     start_reminder_scheduler(app)
 
     return app
 
-       
 if __name__ == '__main__':
     app = create_app()
     app.run()

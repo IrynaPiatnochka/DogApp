@@ -69,6 +69,8 @@ def update_owner_info(id, owner_data):
         owner = db.session.query(DogOwner).filter(DogOwner.id == id).first()
         if owner:
             for key, value in owner_data.items():
+                if key == 'password':
+                    value = hash_password(value)  
                 setattr(owner, key, value)
             db.session.commit()
             db.session.refresh(owner)
@@ -83,13 +85,12 @@ def update_owner_info(id, owner_data):
         return {"message": str(e)}, 500
 
 
+
 def delete_owner_from_db(id):
     try:
-        print(f"Attempting to delete owner with ID: {id}")
         query = delete(DogOwner).filter(DogOwner.id == id)
         result = db.session.execute(query)
         db.session.commit()
-        print(f"Rows affected: {result.rowcount}")
         if result.rowcount == 0:
             return {"message": "Owner not found"}, 404
         return {'message': 'Owner deleted successfully'}, 200
